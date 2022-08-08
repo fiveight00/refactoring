@@ -1,0 +1,66 @@
+parameters:
+  card_details_url: '%env(CARD_DETAILS_URL)%'
+  exchange_rate_url: '%env(EXCHANGE_RATE_URL)%'
+  exchange_rate_api_key: '%env(EXCHANGE_RATE_API_KEY)%'
+
+services:
+  transaction.service:
+    class: App\Domain\Transaction\Service\TransactionService
+    public: true
+    arguments:
+      - '@transaction.provider'
+
+  transaction.provider:
+    class: App\Domain\Transaction\Service\TransactionProvider
+
+  card.service:
+    class: App\Domain\Card\Service\CardService
+    public: true
+    arguments:
+      - '@card.data_provider'
+
+  card.data_provider:
+    class: App\Domain\Card\Service\CardDataProvider
+    arguments:
+      - '@card_details.adapter'
+
+  card_details.adapter:
+    class: App\Domain\Card\Adapter\CardDetailsAdapter
+    arguments:
+      - '@card_details.client'
+
+  card_details.client:
+    class: App\Domain\Card\Client\CardDetailsClient
+    arguments:
+      - '%card_details_url%'
+
+  exchange_rate.service:
+    class: App\Domain\ExchangeRate\Service\ExchangeRateService
+    public: true
+    arguments:
+      - '@exchange_rate.data_provider'
+
+  exchange_rate.data_provider:
+    class: App\Domain\ExchangeRate\Service\ExchangeRateDataProvider
+    arguments:
+      - '@exchange_rate.adapter'
+
+  exchange_rate.adapter:
+    class: App\Domain\ExchangeRate\Adapter\ExchangeRateAdapter
+    arguments:
+      - '@exchange_rate.client'
+
+  exchange_rate.client:
+    class: App\Domain\ExchangeRate\Client\ExchangeRateClient
+    arguments:
+      - '%exchange_rate_url%'
+      - '%exchange_rate_api_key%'
+
+  commission.service:
+    class: App\Domain\Commission\Service\CommissionService
+    public: true
+    arguments:
+      - '@commission.calculator'
+
+  commission.calculator:
+    class: App\Domain\Commission\Service\CommissionCalculator

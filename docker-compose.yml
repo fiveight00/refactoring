@@ -1,0 +1,10 @@
+services:
+  php:
+    build:
+      dockerfile: Dockerfile
+      context: docker/php
+    user: 1000:1000
+    environment:
+      COMPOSER_HOME: '/app/.composer'
+    volumes:
+      - ./:/app:cached
